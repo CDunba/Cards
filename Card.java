@@ -1,5 +1,7 @@
+//The dealer uses a Deck object to deal Hand objects to the players.  The dealer may or may not be a player who gets a hand of his own 
+//(poker dealers in casinos don't receive a hand, but most other games involve the dealer getting a hand).
 
-public class Card {
+public class Card {						//A class like the one presented in the modules, but with a few changes.
 	private char value;
 	private Suit suit;
 	private boolean errorFlag;
@@ -23,7 +25,13 @@ public class Card {
 										//below.
 	}
 	
-	//Insert Accessors for suit and value here. 
+	//Insert Accessors for suit and value here.  
+	Suit getSuit(){
+		return suit;
+	}
+	char getValue(){
+		return value;
+	}
 	
 	//Insert Accessor for errorFlag here.
 	
@@ -43,7 +51,7 @@ public class Card {
 	public static void main(String[] args) {
 		
 	}
-	public class Hand {
+	public class Hand {					//A class that represents the cards held by a single player.
 		public int MAX_CARDS =100;
 		private Card[] myCards;
 		private int numCards;
@@ -78,7 +86,9 @@ public class Card {
 			return Card;                //Accessor for an individual card.  Returns a card with errorFlag = true if k is bad.
 		}
 	}
-	public class Deck{
+	public class Deck{					//  A class that represents the source of the cards for dealing and, as the game progresses, the place 
+										//from which players can receive new cards (say, as they pick cards "from the deck" or when future hands 
+										//are to be dealt from the same deck).
 		 public static final int MAX_CARDS=6*52; //initialize it to allow a maximum of six packs (6×52 cards).
 		 private static Card[] masterPack;
 	}
