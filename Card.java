@@ -3,9 +3,9 @@ public class Card {
 	private char value;
 	private Suit suit;
 	private boolean errorFlag;
-	Card currentCard;
+	static Card currentCard;
 	
-	public enum Suit {
+	public static enum Suit {
 		clubs, diamonds, hearts, spades
 	}
 	
@@ -14,7 +14,7 @@ public class Card {
 		this.value=value;
 		this.suit=suit;
 		set(value,suit);
-			}
+		}
 	
 
 	public String toString(){
@@ -45,7 +45,7 @@ public class Card {
 	
 	//Insert Accessor for errorFlag here.
 	
-	boolean equals(Card card){ 		
+	static boolean equals(Card card){ 		
 		boolean Check = false;  
         if (card.equals(currentCard)) {
         	Check = true;
@@ -95,10 +95,14 @@ public class Card {
 		System.out.println( secondCard.toString());
 		System.out.println( thirdCard.toString());
 		
-		//test Hand
-		Card card=new Card ('3', Suit.clubs) ;
+		Card card = new Card('9', Suit.clubs);
+		currentCard = new Card('9', Suit.clubs); 
+		equals(card);
 		
-		Card.Hand.takeCard(firstCard);
+		//test Hand
+		//Card card=new Card ('3', Suit.clubs) ;
+		
+		
 	}
 	public class Hand {
 		public int MAX_CARDS =100;
@@ -113,14 +117,13 @@ public class Card {
 		}
 		
 		public boolean takeCard(Card card){
-			Card c = new Card('3', Suit.clubs);
-			myCards[0]=c;
 			int i;
 			for (i=0;i<myCards.length;i++){			// adds a card to the next available position in the myCards array.  
-				if(myCards[i]==null){				//This is an object copy, not a reference copy, since the source 
+				if(myCards[i]==null){
+					myCards[i]=card;//This is an object copy, not a reference copy, since the source 
 				}									//  of the Card might destroy or change its data after our Hand gets 
 			}										//it -- we want our local data to be exactly as it was when we received it.
-			if(myCards[i]==c[0]){
+			if(myCards[i]==card){
 			return true;				
 			}			
 			else {						 
@@ -129,7 +132,7 @@ public class Card {
 		}
 		
 		Card playCard(int a){
-			 return card;				//returns and removes the card in the top occupied position of the array.
+			 return myCards[0];				//returns and removes the card in the top occupied position of the array.
 		}
 		
 		Card playCard(int a, int a){
