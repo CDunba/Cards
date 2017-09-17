@@ -3,6 +3,7 @@ public class Card {
 	private char value;
 	private Suit suit;
 	private boolean errorFlag;
+	Card currentCard;
 	
 	public enum Suit {
 		clubs, diamonds, hearts, spades
@@ -10,6 +11,8 @@ public class Card {
 	
 	Card(char value, Suit suit){	
 		set('A',Suit.spades);	
+		this.value=value;
+		this.suit=suit;
 		set(value,suit);
 			}
 	
@@ -42,13 +45,24 @@ public class Card {
 	
 	//Insert Accessor for errorFlag here.
 	
-	boolean equals(Card card){ 			// returns true if all the fields (members) are identical and false, otherwise.
+	boolean equals(Card card){ 		
+		boolean Check = false;  
+        if (card.equals(currentCard)) {
+        	Check = true;
+            System.out.println("Cards are the same.");
+                }
+            
+        if (Check == false) {
+                System.out.println("Cards different");
+            }
+        
+        Check = false;// returns true if all the fields (members) are identical and false, otherwise.
 		return true;
 	}
 	
 	private boolean isValid(char value, Suit suit){
 
-		if (value >= '1' && value <='9')
+		if (value >= '2' && value <='9')
               return true;
 		else if (value=='A'|| value=='T' || value=='Q'||value=='K')
 			  return true;
@@ -80,6 +94,11 @@ public class Card {
 		System.out.println( firstCard.toString());
 		System.out.println( secondCard.toString());
 		System.out.println( thirdCard.toString());
+		
+		//test Hand
+		Card card=new Card ('3', Suit.clubs) ;
+		
+		Card.Hand.takeCard(firstCard);
 	}
 	public class Hand {
 		public int MAX_CARDS =100;
@@ -93,9 +112,9 @@ public class Card {
 			myCards = null;							//remove all cards from the hand (in the simplest way).
 		}
 		
-		boolean takeCard(Card card){
-			Card[] c = new Card[0];
-			c[0]=card;
+		public boolean takeCard(Card card){
+			Card c = new Card('3', Suit.clubs);
+			myCards[0]=c;
 			int i;
 			for (i=0;i<myCards.length;i++){			// adds a card to the next available position in the myCards array.  
 				if(myCards[i]==null){				//This is an object copy, not a reference copy, since the source 
@@ -110,11 +129,11 @@ public class Card {
 		}
 		
 		Card playCard(int a){
-			 return Card;				//returns and removes the card in the top occupied position of the array.
+			 return card;				//returns and removes the card in the top occupied position of the array.
 		}
 		
 		Card playCard(int a, int a){
-			return Card;				//returns and removes the card in the top occupied position of the array.
+			return card;				//returns and removes the card in the top occupied position of the array.
 		}
 		
 		String toString(){
@@ -124,7 +143,7 @@ public class Card {
 		//Insert Accessor for numCards here.
 		
 		Card inspectCard(int k){
-			return Card;                //Accessor for an individual card.  Returns a card with errorFlag = true if k is bad.
+			return card;                //Accessor for an individual card.  Returns a card with errorFlag = true if k is bad.
 		}
 	}
 	public class Deck{
