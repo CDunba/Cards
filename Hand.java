@@ -3,7 +3,7 @@ public class Hand {
 		private Card[] myCards = new Card[MAX_CARDS];
 		private int numCards;
 		
-		Hand() { //default constructor
+		Hand() { // default constructor
 			numCards=0;
 		}
 		
