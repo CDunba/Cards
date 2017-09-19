@@ -199,7 +199,8 @@ public class Card {
 		Deck d = new Deck(1);
 		Hand h = new Hand();
 		
-		Card[][] HandArray = new Card[numHands][]; //2d array 1st dimension for round, 2 dimension for number of card in array
+		Card[][] HandArray = new Card[numHands][]; //2d array 1st dimension for playerNumner, 
+												//2nd dimension for number of card in array
 		int count =52;
 		int playerNumber=0;
 		int numCards=0;
