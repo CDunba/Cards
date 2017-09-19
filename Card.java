@@ -201,13 +201,20 @@ public class Card {
 		
 		Card[][] HandArray = new Card[numHands][]; //2d array 1st dimension for round, 2 dimension for number of card in array
 		int count =52;
-		int round;
+		int playerNumber=0;
+		int numCards=0;
+		int i=0;
+		int j;
 		
-		while(count>-1){
-			for (int i =0;i<numHands;i++){
-				Card c= d.dealCard();
-				HandArray[i][round]=takeCard(c); //fix needed
-				count--;
+		for(j=0;j<count;j++){
+			for(i=0;i<numHands;i++){					
+				HandArray[i][j]=d.dealCard();
+			}	
+		}
+		
+		for(int k=0;k<i;i++){
+			for(int l=0;l<j;l++){
+				System.out.println(HandArray[k][l]);
 			}
 		}
 		//rest objects 
