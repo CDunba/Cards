@@ -198,9 +198,17 @@ public class Card {
 		//loop for dealing cards in hand -- Needs work
 		Deck d = new Deck(1);
 		Hand h = new Hand();
-		for (int i =0;i<numHands;i++){
-		Card c= d.dealCard();
-		h.takeCard(c);
+		
+		Card[][] HandArray = new Card[numHands][]; //2d array 1st dimension for round, 2 dimension for number of card in array
+		int count =52;
+		int round;
+		
+		while(count>-1){
+			for (int i =0;i<numHands;i++){
+				Card c= d.dealCard();
+				HandArray[i][round]=takeCard(c); //fix needed
+				count--;
+			}
 		}
 		//rest objects 
 		d.init(1);
