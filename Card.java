@@ -1,158 +1,212 @@
+import java.io.File;
+import java.util.Scanner;
 
 public class Card {
 	private char value;
 	private Suit suit;
 	private boolean errorFlag;
-	static Card currentCard;
-	
+
 	public static enum Suit {
 		clubs, diamonds, hearts, spades
 	}
-	
-	Card(char value, Suit suit){	
-		set('A',Suit.spades);	
-		this.value=value;
-		this.suit=suit;
-		set(value,suit);
-		}
-	
 
-	public String toString(){
+	// Constructor with 2 parameters
+	Card(char value, Suit suit) {
+		set(value, suit);
+	}
+
+	// Overload this to cope with a client that wants to instantiate without
+	// parameters and use 'A' and 'spades' as the
+	// default value and suite when not supplied.
+	Card() {
+		set('A', Suit.spades);
+	}
+
+	// toString for returning current Values
+	public String toString() {
 		if (errorFlag)
-			 return "** Illegal ** ";
+			return "** Illegal ** ";
 		else
-	        return value + " of " + suit ;
+			return value + " of " + suit;
 	}
-	
-	boolean set(char value, Suit suit){ // a mutator that accepts the legal values established in the earlier section. 
-   		this.suit = suit;
-   	 	if(isValid(value,suit)){
+
+	public char getValue() {
+		return value;
+	}
+
+	public Suit getSuit() {
+		return suit;
+	}
+
+	boolean set(char value, Suit suit) { // a mutator that accepts the legal
+											// values established in the earlier
+											// section.
+		this.suit = suit;
+		if (isValid(value, suit)) {
 			this.value = value;
-    		errorFlag=false;
-    		return true;
-   	 	}
-   	 	else
-		{
-			errorFlag=true;
+			errorFlag = false;
+			return true;
+		} else {
+			errorFlag = true;
 		}
-		return false;					// When bad values are passed, errorFlag is set to true and other values can be 
-										//left in any state (even partially set). If good values are passed, they are 
-										//stored and errorFlag is set to false.  Make use of the private helper, listed 
-										//below.
+		return false; // When bad values are passed, errorFlag is set to true
+						// and other values can be
+						// left in any state (even partially set). If good
+						// values are passed, they are
+						// stored and errorFlag is set to false. Make use of the
+						// private helper, listed
+						// below.
 	}
-	
-	//Insert Accessors for suit and value here. 
-	
-	//Insert Accessor for errorFlag here.
-	
-	static boolean equals(Card card){ 		
-		boolean Check = false;  
-        if (card.equals(currentCard)) {
-        	Check = true;
-            System.out.println("Cards are the same.");
-                }
-            
-        if (Check == false) {
-                System.out.println("Cards different");
-            }
-        
-        Check = false;// returns true if all the fields (members) are identical and false, otherwise.
-		return true;
-	}
-	
-	private boolean isValid(char value, Suit suit){
 
-		if (value >= '2' && value <='9')
-              return true;
-		else if (value=='A'|| value=='T' || value=='Q'||value=='K')
-			  return true;
-		else	  
-              return false;			//a private helper method that returns true or false, depending on the legality 
-										//of the parameters.  Note that, although it may be impossible for suit to be 
-										//illegal (due to its enum-ness), we pass it, anyway, in anticipation of 
-										//possible changes to the type from enum to, say, char or int, someday.  We only 
-										//need to test value, at this time.
+	boolean equals(Card card) {
+		if (errorFlag == card.errorFlag)
+			return true;
+		if (this.suit == card.getSuit() && value == card.getValue())
+			return true;
+		return false;
 	}
-	
-	
+
+	private boolean isValid(char value, Suit suit) {
+
+		if (value >= '2' && value <= '9')
+			return true;
+		else if (value == 'A' || value == 'T' || value == 'J' || value == 'Q' || value == 'K')
+			return true;
+		else
+			return false; // a private helper method that returns true or false,
+							// depending on the legality
+							// of the parameters. Note that, although it may be
+							// impossible for suit to be
+							// illegal (due to its enum-ness), we pass it,
+							// anyway, in anticipation of
+							// possible changes to the type from enum to, say,
+							// char or int, someday. We only
+							// need to test value, at this time.
+	}
+
 	public static void main(String[] args) {
-		Card firstCard ;
-		Card secondCard ;
-		Card thirdCard ;
-		
-		firstCard =new Card( 'A', Suit.spades);
+		/*{ // Phase 1
 
-		secondCard = new Card ('X', Suit.spades);
-		
-		thirdCard = new Card ('3', Suit.clubs) ;
-		System.out.println( firstCard.toString());
-		System.out.println( secondCard.toString());
-		System.out.println( thirdCard.toString());
-		
-		firstCard.set('O',Suit.spades);
-		secondCard.set('Q', Suit.spades); 
-		System.out.println( firstCard.toString());
-		System.out.println( secondCard.toString());
-		System.out.println( thirdCard.toString());
-		
-		Card card = new Card('9', Suit.clubs);
-		currentCard = new Card('9', Suit.clubs); 
-		equals(card);
-		
-		//test Hand
-		//Card card=new Card ('3', Suit.clubs) ;
-		
-		
-	}
-	public class Hand {
-		public int MAX_CARDS =100;
-		private Card[] myCards;
-		private int numCards;
-		
-		Hand() { //default constructor
-			
+			Card firstCard;
+			Card secondCard;
+			Card thirdCard;
+
+			firstCard = new Card('A', Suit.spades);
+			secondCard = new Card('X', Suit.spades);
+			thirdCard = new Card('3', Suit.clubs);
+
+			System.out.println(firstCard.toString());
+			System.out.println(secondCard.toString());
+			System.out.println(thirdCard.toString());
+
+			firstCard.set('O', Suit.spades);
+			secondCard.set('Q', Suit.spades);
+
+			System.out.println(firstCard.toString());
+			System.out.println(secondCard.toString());
+			System.out.println(thirdCard.toString());
+
+			if (firstCard.equals(firstCard))
+				System.out.println("Equal");
+			else
+				System.out.println("Not Equal");
+
 		}
-		void resetHand(){
-			myCards = null;							//remove all cards from the hand (in the simplest way).
-		}
-		
-		public boolean takeCard(Card card){
-			int i;
-			for (i=0;i<myCards.length;i++){			// adds a card to the next available position in the myCards array.  
-				if(myCards[i]==null){
-					myCards[i]=card;//This is an object copy, not a reference copy, since the source 
-				}									//  of the Card might destroy or change its data after our Hand gets 
-			}										//it -- we want our local data to be exactly as it was when we received it.
-			if(myCards[i]==card){
-			return true;				
-			}			
-			else {						 
-			return false;				
+
+		System.out.println("Phase 2");
+		{ // Phase 2
+
+			Card handcard1 = new Card('3', Suit.clubs);
+			Card handcard2 = new Card('T', Suit.clubs);
+			Card handcard3 = new Card('9', Suit.hearts);
+
+			Hand myHand = new Hand();
+
+			int i = 0;
+			while (i < 1000) {
+				if (myHand.takeCard(handcard1)) {
+					if (myHand.takeCard(handcard2)) {
+						if (myHand.takeCard(handcard3)) {
+							// Needs to be improve ?
+						} else
+							break;
+					} else {
+						break;
+					}
+				} else
+					break;
+			}
+			System.out.println("Hand full");
+			System.out.println("After deal");
+			System.out.println("Hand =" + myHand.toString());
+			// Next, play each card in a loop, until the hand is empty.
+			// Display the card played as it is played, and finally, display the
+			// (now empty) hand,
+			// verifying that no cards remain. At some point in your program,
+			// test inspectCard()
+			// with both legal and illegal int arguments
+
+			System.out.println("Testing inspectCard()");
+			System.out.println(myHand.inspectCard(5).toString());
+			System.out.println(myHand.inspectCard(500).toString());
+			while (myHand.getNumCards() != 0) {
+
+				System.out.println("Playing " + myHand.playCard().toString());
 			}
 		}
-		
-		Card playCard(int a){
-			 return myCards[0];				//returns and removes the card in the top occupied position of the array.
-		}
-		
-		Card playCard(int a, int a){
-			return card;				//returns and removes the card in the top occupied position of the array.
-		}
-		
-		String toString(){
-			return "";                  //a stringizer that the client can use prior to displaying the entire hand.
-		}
-		
-		//Insert Accessor for numCards here.
-		
-		Card inspectCard(int k){
-			return card;                //Accessor for an individual card.  Returns a card with errorFlag = true if k is bad.
-		}
-	}
-	public class Deck{
-		 public static final int MAX_CARDS=6*52; //initialize it to allow a maximum of six packs (6×52 cards).
-		 private static Card[] masterPack;
-	}
+*/
+		//System.out.print("Phase 3");
+		{
+			// Create deck of Two Packs
+			Deck deck = new Deck(2);
 
-	}
+			while (deck.getTopCard() != 0)
+				System.out.print(deck.dealCard().toString()+ " / ");
 
+			
+			
+			deck.init(2);
+			deck.shuffle();
+			while (deck.getTopCard() != 0)
+				System.out.print(deck.dealCard().toString()+ " / ");
+
+			System.out.println("\n");
+			// Create deck of Single Pack
+			deck.init(1);
+
+			while (deck.getTopCard() != 0)
+				System.out.print(deck.dealCard().toString()+ " / ");
+			
+			deck.init(1);
+			deck.shuffle();
+			while (deck.getTopCard() != 0)
+				System.out.print(deck.dealCard().toString()+ " / ");
+			
+			System.out.println("Press any key to continue . . .");
+			
+		}
+		//Phase 4
+		int numHands;
+		Scanner user_input = new Scanner( System.in );
+		System.out.println("How many hands?(1-10 please)");
+		numHands = user_input.nextInt();
+		while(numHands<0 || numHands>10){
+			System.out.println("How many hands?(1-10 please)");
+			numHands = user_input.nextInt();	
+		}
+		
+		//loop for dealing cards in hand -- Needs work
+		Deck d = new Deck(1);
+		Hand h = new Hand();
+		for (int i =0;i<numHands;i++){
+		Card c= d.dealCard();
+		h.takeCard(c);
+		}
+		//rest objects 
+		d.init(1);
+		h.resetHand();
+		//shuffle deck
+		d.shuffle();
+		
+	}
+}
