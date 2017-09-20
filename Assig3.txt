@@ -1,0 +1,534 @@
+/***********************************************
+ * Courtney Dunbar, Talanda Williams, Tejus Nandha
+ * CST 338-30 FA 17 Homework 3
+ * Group Project Assignment
+ ***********************************************/
+
+//Deck.java
+public class Deck {
+	public static final int MAX_CARDS = 6 * 52; // initialize it to allow a
+												// maximum of six packs (6×52
+												// cards).
+	private static Card[] masterPack; 
+	private Card[] cards = new Card[MAX_CARDS];
+	private int topCard;
+	private int numPacks;
+
+	static private boolean constructed = false;
+
+	public Deck(int numPacks) {
+		if (!constructed) {
+			allocateMasterPack();
+			constructed = true;
+		}
+        init(numPacks) ;
+	}
+
+	void init(int numPacks) {
+		topCard = 0 ;
+		for (int i = 0; i < numPacks; i++) {
+			for (int j = 0; j < masterPack.length; j++) {
+				cards[(i*52) + j] = masterPack[j];
+			}
+		}
+		this.numPacks = numPacks;
+		this.topCard = numPacks * 52;
+	}
+
+	void shuffle() {
+		// Make shuffle better by shuffling multiple times
+		int shuffleTime = (int) (Math.random() * 26 * 10) ;
+		for( int i=0;i<shuffleTime;i++)
+		{
+			int top, bottom ;
+			top = (int) (Math.random() * topCard) ;
+			bottom = (int) (Math.random() * topCard) ;
+			Card tmpCard = cards[bottom];
+			cards[bottom] = cards[top]; 
+			cards[top] = tmpCard ;
+		}
+
+	}
+
+	Card dealCard() {
+		topCard--;
+		return cards[topCard];
+	}
+
+	public int getTopCard() {
+		return topCard;
+	}
+
+	Card inspectCard(int k) {
+		if (k < 0 || k >= (numPacks * 52))
+			return new Card('X', Card.Suit.spades);
+		else
+			return cards[k];
+	}
+
+	static void allocateMasterPack() {
+		Card card[] = new Card[52];
+		char[] values={'A','2','3','4','5','6','7','8','9','T','J','Q','K'};
+		for (int j = 0; j < 4; j++)
+		  for (int i = 0; i < 13; i++) {
+				if (j == 0)
+					card[(j * 13) + i] = new Card(values[i] , Card.Suit.clubs) ;
+				else if (j ==1)
+					card[(j * 13) + i] = new Card(values[i] , Card.Suit.diamonds) ;
+			    else if (j ==2)
+					card[(j * 13) + i] = new Card(values[i] , Card.Suit.hearts) ;
+			    else if (j ==3)
+					card[(j * 13) + i] = new Card(values[i] , Card.Suit.spades) ;
+		}
+		masterPack = card;
+	}
+}
+
+//Hand.java
+public class Hand {
+	public int MAX_CARDS = 100;
+	private Card[] myCards = new Card[MAX_CARDS];
+	private int numCards;
+
+	Hand() { // default constructor
+		numCards = 0;
+	}
+
+	void resetHand() {
+		myCards = null; // remove all cards from the hand (in the simplest way).
+	}
+
+	public boolean takeCard(Card card) {
+		Card tmpCard = null;
+		if (numCards >= MAX_CARDS)
+			return false;
+		else {
+			tmpCard = new Card(card.getValue(), card.getSuit());
+			myCards[numCards] = tmpCard;
+			numCards++;
+			return true;
+		}
+	}
+
+	public Card playCard() {
+		Card pCard = null;
+		if (numCards != 0) {
+			pCard = myCards[numCards - 1];
+			numCards--;
+		}
+		return pCard; // returns and removes the card in the top occupied position of the array.
+	}
+
+	public String toString() {
+		String CardString = "(";
+		for (int i = 0; i < numCards; i++) {
+			CardString = CardString + myCards[i].toString();
+			if (i != numCards - 1)
+				CardString = CardString + ", ";
+		}
+		return CardString + ")"; // a stringizer that the client can use prior to displaying the entire hand.
+	}
+
+	// Insert Accessor for numCards here.
+
+	Card inspectCard(int k) {
+		if (numCards >= k)
+			return myCards[k]; // Accessor for an individual card.
+		else
+			return new Card('O', Card.Suit.clubs); // Returns a card with errorFlag = true if k is bad.
+	}
+
+	public int getNumCards() {
+		return numCards;
+	}
+}
+
+//Card.java
+import java.util.Scanner;
+
+public class Card {
+	private char value;
+	private Suit suit;
+	private boolean errorFlag;
+
+	public static enum Suit {
+		clubs, diamonds, hearts, spades
+	}
+
+	// Constructor with 2 parameters
+	Card(char value, Suit suit) {
+		set(value, suit);
+	}
+
+	// Overload this to cope with a client that wants to instantiate without
+	// parameters and use 'A' and 'spades' as the
+	// default value and suite when not supplied.
+	Card() {
+		set('A', Suit.spades);
+	}
+
+	// toString for returning current Values
+	public String toString() {
+		if (errorFlag)
+			return "** Illegal ** ";
+		else
+			return value + " of " + suit;
+	}
+
+	public char getValue() {
+		return value;
+	}
+
+	public Suit getSuit() {
+		return suit;
+	}
+
+	boolean set(char value, Suit suit) { // a mutator that accepts the legal
+											// values established in the earlier
+											// section.
+		this.suit = suit;
+		if (isValid(value, suit)) {
+			this.value = value;
+			errorFlag = false;
+			return true;
+		} else {
+			errorFlag = true;
+		}
+		return false; // When bad values are passed, errorFlag is set to true
+						// and other values can be
+						// left in any state (even partially set). If good
+						// values are passed, they are
+						// stored and errorFlag is set to false. Make use of the
+						// private helper, listed
+						// below.
+	}
+
+	boolean equals(Card card) {
+		if (errorFlag == card.errorFlag)
+			return true;
+		if (this.suit == card.getSuit() && value == card.getValue())
+			return true;
+		return false;
+	}
+
+	private boolean isValid(char value, Suit suit) {
+
+		if (value >= '2' && value <= '9')
+			return true;
+		else if (value == 'A' || value == 'T' || value == 'J' || value == 'Q' || value == 'K')
+			return true;
+		else
+			return false; // a private helper method that returns true or false,
+							// depending on the legality
+							// of the parameters. Note that, although it may be
+							// impossible for suit to be
+							// illegal (due to its enum-ness), we pass it,
+							// anyway, in anticipation of
+							// possible changes to the type from enum to, say,
+							// char or int, someday. We only
+							// need to test value, at this time.
+	}
+
+	public static void main(String[] args) {
+
+		{ // Phase 1
+
+			Card firstCard;
+			Card secondCard;
+			Card thirdCard;
+
+			firstCard = new Card('A', Suit.spades);
+			secondCard = new Card('X', Suit.spades);
+			thirdCard = new Card('3', Suit.clubs);
+
+			System.out.println(firstCard.toString());
+			System.out.println(secondCard.toString());
+			System.out.println(thirdCard.toString());
+
+			firstCard.set('O', Suit.spades);
+			secondCard.set('Q', Suit.spades);
+
+			System.out.println(firstCard.toString());
+			System.out.println(secondCard.toString());
+			System.out.println(thirdCard.toString());
+
+			if (firstCard.equals(firstCard))
+				System.out.println("Equal");
+			else
+				System.out.println("Not Equal");
+
+		}
+
+		System.out.println("Phase 2");
+		{ // Phase 2
+
+			Card handcard1 = new Card('3', Suit.clubs);
+			Card handcard2 = new Card('T', Suit.clubs);
+			Card handcard3 = new Card('9', Suit.hearts);
+
+			Hand myHand = new Hand();
+
+			int i = 0;
+			while (i < 1000) {
+				if (myHand.takeCard(handcard1)) {
+					if (myHand.takeCard(handcard2)) {
+						if (myHand.takeCard(handcard3)) { // Needs to be improve ?
+						} else
+							break;
+					} else {
+						break;
+					}
+				} else
+					break;
+			}
+
+			System.out.println("Hand full");
+			System.out.println("After deal");
+			System.out.println("Hand =" + myHand.toString()); // Next, play each card in a loop, until the hand is
+																// empty.
+																// Display the card played as it is played, and finally,
+																// display the
+																// (now empty) hand,
+																// verifying that no cards remain. At some point in your
+																// program,
+																// test inspectCard()
+																// with both legal and illegal int arguments
+
+			System.out.println("Testing inspectCard()");
+			System.out.println(myHand.inspectCard(5).toString());
+			System.out.println(myHand.inspectCard(500).toString());
+			while (myHand.getNumCards() != 0) {
+
+				System.out.println("Playing " + myHand.playCard().toString());
+			}
+		}
+
+		// System.out.print("Phase 3");
+		{
+			// Create deck of Two Packs
+			Deck deck = new Deck(2);
+
+			while (deck.getTopCard() != 0)
+				System.out.print(deck.dealCard().toString() + " / ");
+
+			deck.init(2);
+			deck.shuffle();
+
+			while (deck.getTopCard() != 0)
+				System.out.print(deck.dealCard().toString() + " / ");
+
+			System.out.println("\n"); // Create deck of Single Pack
+
+			deck.init(1);
+
+			while (deck.getTopCard() != 0)
+				System.out.print(deck.dealCard().toString() + " / ");
+
+			deck.init(1);
+			deck.shuffle();
+			while (deck.getTopCard() != 0)
+				System.out.print(deck.dealCard().toString() + " / ");
+
+			System.out.println("\nPress any key to continue . . .");
+
+		}
+
+		// System.out.print("Phase 4");
+		{
+			Hand hand[] = new Hand[10];
+			Scanner keyboard = new Scanner(System.in);
+			int numberOfPlayers = 0;
+			while (numberOfPlayers < 1 || numberOfPlayers > 10) {
+				System.out.println("How many hands? (1 - 10, please):");
+				numberOfPlayers = keyboard.nextInt();
+			} // Instantiate a single-pack Deck
+			Deck deck = new Deck(1);
+
+			for (int j = 0; j < numberOfPlayers; j++)
+				hand[j] = new Hand();
+
+			for (int i = 0; i < (52 / numberOfPlayers); i++) {
+				for (int j = 0; j < numberOfPlayers; j++) {
+					hand[j].takeCard(deck.dealCard());
+				}
+			}
+
+			System.out.println("Here are our hands, from unshuffled deck:");
+			for (int j = 0; j < numberOfPlayers; j++) {
+				String output = "";
+
+				for (int i = 0; i < (52 / numberOfPlayers); i++) {
+					output = hand[j].playCard().toString() + output;
+					if (i != (52 / numberOfPlayers) - 1)
+						output = "," + output;
+					else
+						System.out.println("Hand = ( " + output + ")");
+				}
+			}
+
+			deck.init(1);
+
+			deck.shuffle();
+
+			for (int j = 0; j < numberOfPlayers; j++)
+				hand[j] = new Hand();
+
+			for (int i = 0; i < (52 / numberOfPlayers); i++) {
+				for (int j = 0; j < numberOfPlayers; j++) {
+					hand[j].takeCard(deck.dealCard());
+				}
+			}
+
+			System.out.println("Here are our hands, from SHUFFLED deck:");
+			for (int j = 0; j < numberOfPlayers; j++) {
+				System.out.print("Hand = ( ");
+				for (int i = 0; i < (52 / numberOfPlayers); i++) {
+					System.out.print(hand[j].playCard().toString());
+					if (i != (52 / numberOfPlayers) - 1)
+						System.out.print(",");
+					else
+						System.out.println(")");
+				}
+			}
+
+		}
+
+	}
+}
+
+/*  Output :
+A of spades
+** Illegal ** 
+3 of clubs
+** Illegal ** 
+Q of spades
+3 of clubs
+Equal
+Phase 2
+Hand full
+After deal
+Hand =(3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs, T of clubs, 9 of hearts, 3 of clubs)
+Testing inspectCard()
+9 of hearts
+** Illegal ** 
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+Playing 9 of hearts
+Playing T of clubs
+Playing 3 of clubs
+K of spades / Q of spades / J of spades / T of spades / 9 of spades / 8 of spades / 7 of spades / 6 of spades / 5 of spades / 4 of spades / 3 of spades / 2 of spades / A of spades / K of hearts / Q of hearts / J of hearts / T of hearts / 9 of hearts / 8 of hearts / 7 of hearts / 6 of hearts / 5 of hearts / 4 of hearts / 3 of hearts / 2 of hearts / A of hearts / K of diamonds / Q of diamonds / J of diamonds / T of diamonds / 9 of diamonds / 8 of diamonds / 7 of diamonds / 6 of diamonds / 5 of diamonds / 4 of diamonds / 3 of diamonds / 2 of diamonds / A of diamonds / K of clubs / Q of clubs / J of clubs / T of clubs / 9 of clubs / 8 of clubs / 7 of clubs / 6 of clubs / 5 of clubs / 4 of clubs / 3 of clubs / 2 of clubs / A of clubs / K of spades / Q of spades / J of spades / T of spades / 9 of spades / 8 of spades / 7 of spades / 6 of spades / 5 of spades / 4 of spades / 3 of spades / 2 of spades / A of spades / K of hearts / Q of hearts / J of hearts / T of hearts / 9 of hearts / 8 of hearts / 7 of hearts / 6 of hearts / 5 of hearts / 4 of hearts / 3 of hearts / 2 of hearts / A of hearts / K of diamonds / Q of diamonds / J of diamonds / T of diamonds / 9 of diamonds / 8 of diamonds / 7 of diamonds / 6 of diamonds / 5 of diamonds / 4 of diamonds / 3 of diamonds / 2 of diamonds / A of diamonds / K of clubs / Q of clubs / J of clubs / T of clubs / 9 of clubs / 8 of clubs / 7 of clubs / 6 of clubs / 5 of clubs / 4 of clubs / 3 of clubs / 2 of clubs / A of clubs / 3 of diamonds / 2 of diamonds / 6 of clubs / J of hearts / T of hearts / J of diamonds / 7 of clubs / K of clubs / T of clubs / 2 of hearts / K of diamonds / 2 of clubs / 6 of diamonds / 7 of spades / 8 of spades / A of clubs / Q of diamonds / 4 of diamonds / 5 of hearts / T of diamonds / A of hearts / K of diamonds / 4 of spades / 7 of diamonds / 9 of spades / 5 of spades / 5 of hearts / 4 of hearts / A of hearts / 9 of hearts / 4 of diamonds / 3 of spades / 8 of hearts / 7 of spades / J of spades / A of spades / K of hearts / Q of hearts / 8 of hearts / 8 of diamonds / 2 of diamonds / 6 of spades / 3 of clubs / J of spades / Q of spades / 9 of diamonds / 6 of spades / 5 of clubs / 7 of hearts / 7 of hearts / 6 of diamonds / 8 of clubs / J of clubs / 3 of diamonds / Q of clubs / 6 of hearts / 9 of hearts / 3 of clubs / K of clubs / 6 of hearts / 3 of spades / Q of clubs / T of hearts / Q of spades / 4 of spades / K of spades / T of spades / 9 of spades / 5 of clubs / 9 of clubs / 5 of spades / 5 of diamonds / K of hearts / 8 of spades / 2 of hearts / Q of hearts / T of diamonds / 4 of clubs / 6 of clubs / T of clubs / A of diamonds / J of clubs / 2 of clubs / T of spades / 4 of hearts / 2 of spades / 3 of hearts / 4 of clubs / 8 of clubs / 5 of diamonds / 7 of clubs / 9 of clubs / 9 of diamonds / 8 of diamonds / A of clubs / A of spades / J of hearts / J of diamonds / Q of diamonds / 3 of hearts / 7 of diamonds / A of diamonds / 2 of spades / K of spades / 
+
+K of spades / Q of spades / J of spades / T of spades / 9 of spades / 8 of spades / 7 of spades / 6 of spades / 5 of spades / 4 of spades / 3 of spades / 2 of spades / A of spades / K of hearts / Q of hearts / J of hearts / T of hearts / 9 of hearts / 8 of hearts / 7 of hearts / 6 of hearts / 5 of hearts / 4 of hearts / 3 of hearts / 2 of hearts / A of hearts / K of diamonds / Q of diamonds / J of diamonds / T of diamonds / 9 of diamonds / 8 of diamonds / 7 of diamonds / 6 of diamonds / 5 of diamonds / 4 of diamonds / 3 of diamonds / 2 of diamonds / A of diamonds / K of clubs / Q of clubs / J of clubs / T of clubs / 9 of clubs / 8 of clubs / 7 of clubs / 6 of clubs / 5 of clubs / 4 of clubs / 3 of clubs / 2 of clubs / A of clubs / 6 of spades / 5 of diamonds / 6 of clubs / 9 of hearts / K of clubs / J of hearts / 2 of spades / A of spades / 9 of diamonds / T of clubs / 6 of hearts / 8 of spades / K of hearts / J of clubs / 5 of clubs / 3 of spades / 4 of hearts / T of spades / 4 of clubs / 6 of diamonds / 5 of spades / 3 of hearts / Q of hearts / K of diamonds / 8 of diamonds / A of diamonds / 5 of hearts / 7 of clubs / J of spades / Q of spades / T of diamonds / 3 of clubs / A of hearts / 4 of spades / 3 of diamonds / 9 of spades / 8 of clubs / 7 of spades / 4 of diamonds / 7 of hearts / Q of diamonds / 2 of hearts / 7 of diamonds / 2 of diamonds / J of diamonds / Q of clubs / T of hearts / 2 of clubs / K of spades / A of clubs / 8 of hearts / 9 of clubs / 
+Press any key to continue . . .
+How many hands? (1 - 10, please):
+6
+Here are our hands, from unshuffled deck:
+Hand = ( K of spades,7 of spades,A of spades,8 of hearts,2 of hearts,9 of diamonds,3 of diamonds,T of clubs)
+Hand = ( Q of spades,6 of spades,K of hearts,7 of hearts,A of hearts,8 of diamonds,2 of diamonds,9 of clubs)
+Hand = ( J of spades,5 of spades,Q of hearts,6 of hearts,K of diamonds,7 of diamonds,A of diamonds,8 of clubs)
+Hand = ( T of spades,4 of spades,J of hearts,5 of hearts,Q of diamonds,6 of diamonds,K of clubs,7 of clubs)
+Hand = ( 9 of spades,3 of spades,T of hearts,4 of hearts,J of diamonds,5 of diamonds,Q of clubs,6 of clubs)
+Hand = ( 8 of spades,2 of spades,9 of hearts,3 of hearts,T of diamonds,4 of diamonds,J of clubs,5 of clubs)
+Here are our hands, from SHUFFLED deck:
+Hand = ( K of clubs,4 of clubs,J of diamonds,Q of spades,6 of hearts,J of spades,A of diamonds,7 of hearts)
+Hand = ( Q of hearts,2 of clubs,A of hearts,J of hearts,9 of diamonds,6 of clubs,K of diamonds,4 of spades)
+Hand = ( T of clubs,3 of diamonds,4 of diamonds,6 of spades,Q of clubs,2 of hearts,3 of clubs,7 of clubs)
+Hand = ( K of hearts,T of spades,9 of clubs,9 of spades,K of spades,A of clubs,2 of diamonds,2 of spades)
+Hand = ( 8 of clubs,T of diamonds,8 of spades,5 of spades,T of hearts,5 of diamonds,9 of hearts,J of clubs)
+Hand = ( 4 of hearts,3 of spades,3 of hearts,6 of diamonds,7 of diamonds,7 of spades,A of spades,5 of hearts)
+*/
