@@ -2,62 +2,7 @@ public class Deck {
 	public static final int MAX_CARDS = 6 * 52; // initialize it to allow a
 												// maximum of six packs (6×52
 												// cards).
-	private static Card[] masterPack; /*
-										 * = { new
-										 * Card('A',Card.Suit.spades),new
-										 * Card('A',Card.Suit.clubs),new
-										 * Card('A',Card.Suit.diamonds),new
-										 * Card('A',Card.Suit.hearts), new
-										 * Card('2',Card.Suit.spades),new
-										 * Card('2',Card.Suit.clubs),new
-										 * Card('2',Card.Suit.diamonds),new
-										 * Card('2',Card.Suit.hearts), new
-										 * Card('3',Card.Suit.spades),new
-										 * Card('3',Card.Suit.clubs),new
-										 * Card('3',Card.Suit.diamonds),new
-										 * Card('3',Card.Suit.hearts), new
-										 * Card('4',Card.Suit.spades),new
-										 * Card('4',Card.Suit.clubs),new
-										 * Card('4',Card.Suit.diamonds),new
-										 * Card('4',Card.Suit.hearts), new
-										 * Card('5',Card.Suit.spades),new
-										 * Card('5',Card.Suit.clubs),new
-										 * Card('5',Card.Suit.diamonds),new
-										 * Card('5',Card.Suit.hearts), new
-										 * Card('6',Card.Suit.spades),new
-										 * Card('6',Card.Suit.clubs),new
-										 * Card('6',Card.Suit.diamonds),new
-										 * Card('6',Card.Suit.hearts), new
-										 * Card('7',Card.Suit.spades),new
-										 * Card('7',Card.Suit.clubs),new
-										 * Card('7',Card.Suit.diamonds),new
-										 * Card('7',Card.Suit.hearts), new
-										 * Card('8',Card.Suit.spades),new
-										 * Card('8',Card.Suit.clubs),new
-										 * Card('8',Card.Suit.diamonds),new
-										 * Card('8',Card.Suit.hearts), new
-										 * Card('9',Card.Suit.spades),new
-										 * Card('9',Card.Suit.clubs),new
-										 * Card('9',Card.Suit.diamonds),new
-										 * Card('9',Card.Suit.hearts), new
-										 * Card('T',Card.Suit.spades),new
-										 * Card('T',Card.Suit.clubs),new
-										 * Card('T',Card.Suit.diamonds),new
-										 * Card('T',Card.Suit.hearts), new
-										 * Card('J',Card.Suit.spades),new
-										 * Card('J',Card.Suit.clubs),new
-										 * Card('J',Card.Suit.diamonds),new
-										 * Card('J',Card.Suit.hearts), new
-										 * Card('Q',Card.Suit.spades),new
-										 * Card('Q',Card.Suit.clubs),new
-										 * Card('Q',Card.Suit.diamonds),new
-										 * Card('Q',Card.Suit.hearts), new
-										 * Card('K',Card.Suit.spades),new
-										 * Card('K',Card.Suit.clubs),new
-										 * Card('K',Card.Suit.diamonds),new
-										 * Card('K',Card.Suit.hearts) }
-										 */
-
+	private static Card[] masterPack; 
 	private Card[] cards = new Card[MAX_CARDS];
 	private int topCard;
 	private int numPacks;
@@ -84,6 +29,7 @@ public class Deck {
 	}
 
 	void shuffle() {
+		// Make shuffle better by shuffling multiple times
 		int shuffleTime = (int) (Math.random() * 26 * 10) ;
 		for( int i=0;i<shuffleTime;i++)
 		{
